@@ -1,0 +1,2011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microsoft Fabric — Team Orientation</title>
+<style>
+  /* ============ FONTS ============ */
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  /* ============ TOKENS ============ */
+  :root {
+    --bg: #0A0F1F;
+    --bg-2: #0F1B3D;
+    --bg-3: #1A2752;
+    --ink: #F4F7FB;
+    --ink-2: #B8C4DD;
+    --ink-3: #6B7A99;
+    --teal: #00D4C0;
+    --teal-2: #00B8A9;
+    --teal-deep: #008B82;
+    --amber: #F5B344;
+    --coral: #FF6B6B;
+    --line: rgba(180, 200, 230, 0.08);
+    --line-2: rgba(180, 200, 230, 0.15);
+    --card: rgba(20, 30, 60, 0.55);
+    --card-2: rgba(15, 27, 61, 0.85);
+
+    --display: 'Fraunces', Georgia, serif;
+    --body: 'Inter', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--body);
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ============ PARTICLE CANVAS ============ */
+  #particles {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* atmospheric gradient overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(0, 184, 169, 0.12), transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(30, 39, 97, 0.4), transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(10, 15, 31, 0) 0%, rgba(10, 15, 31, 0.6) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* ============ DECK STRUCTURE ============ */
+  .deck {
+    position: relative;
+    z-index: 2;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    padding: 56px 80px 130px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(20px);
+    transition: opacity 0.4s ease, transform 0.5s ease, visibility 0s linear 0.4s;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .slide.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+    transition: opacity 0.4s ease, transform 0.5s ease, visibility 0s linear 0s;
+  }
+
+  .slide::-webkit-scrollbar { width: 6px; }
+  .slide::-webkit-scrollbar-track { background: transparent; }
+  .slide::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 3px; }
+
+  /* ============ TYPOGRAPHY ============ */
+  h1, h2, h3, h4 { font-family: var(--display); font-weight: 600; letter-spacing: -0.015em; }
+  h1 { font-size: clamp(48px, 6vw, 88px); line-height: 1.02; }
+  h2 { font-size: clamp(32px, 3.6vw, 52px); line-height: 1.05; margin-bottom: 12px; }
+  h3 { font-size: 24px; line-height: 1.2; }
+  h4 { font-size: 18px; line-height: 1.3; font-family: var(--body); font-weight: 600; }
+
+  p { font-size: 17px; line-height: 1.6; color: var(--ink-2); margin-bottom: 14px; }
+  p strong { color: var(--ink); font-weight: 600; }
+
+  .eyebrow {
+    font-family: var(--body);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 18px;
+    display: block;
+  }
+  .lede {
+    font-family: var(--display);
+    font-size: 22px;
+    font-style: italic;
+    color: var(--teal);
+    line-height: 1.4;
+    margin-bottom: 32px;
+    font-weight: 400;
+  }
+  .source {
+    position: absolute;
+    bottom: 24px;
+    left: 80px;
+    font-size: 11px;
+    color: var(--ink-3);
+    font-style: italic;
+  }
+  code, .mono { font-family: var(--mono); font-size: 0.9em; color: var(--teal); }
+
+  /* ============ NAV ============ */
+  .nav {
+    position: fixed;
+    bottom: 24px;
+    right: 32px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    z-index: 100;
+    background: rgba(10, 15, 31, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--line-2);
+    border-radius: 999px;
+    padding: 8px 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+  .nav button {
+    background: transparent;
+    border: none;
+    color: var(--ink-2);
+    cursor: pointer;
+    font-family: var(--body);
+    font-size: 14px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    transition: all 0.2s;
+  }
+  .nav button:hover { color: var(--teal); }
+  .nav .counter {
+    color: var(--ink-3);
+    font-size: 12px;
+    font-family: var(--mono);
+    min-width: 60px;
+    text-align: center;
+  }
+  .nav .counter b { color: var(--ink); font-weight: 500; }
+
+  .progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    background: var(--teal);
+    z-index: 100;
+    transition: width 0.4s ease;
+    box-shadow: 0 0 12px var(--teal);
+  }
+
+  /* ============ SLIDE LAYOUTS ============ */
+  .slide-title { display: flex; flex-direction: column; justify-content: center; padding: 0 80px; }
+  .slide-title h1 { margin-bottom: 24px; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+
+  /* ============ COMPONENTS ============ */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .card:hover { border-color: var(--line-2); transform: translateY(-2px); }
+  .card-accent { border-top: 2px solid var(--teal); }
+  .card h4 { margin-bottom: 8px; color: var(--ink); }
+  .card p { font-size: 14px; margin-bottom: 0; }
+  .card .icon-wrap {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: rgba(0, 212, 192, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: rgba(0, 212, 192, 0.12);
+    color: var(--teal);
+    border: 1px solid rgba(0, 212, 192, 0.2);
+  }
+  .pill-amber { background: rgba(245, 179, 68, 0.12); color: var(--amber); border-color: rgba(245, 179, 68, 0.2); }
+  .pill-coral { background: rgba(255, 107, 107, 0.12); color: var(--coral); border-color: rgba(255, 107, 107, 0.2); }
+
+  .header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .header-row .icon-title {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .header-row .icon-title svg {
+    width: 44px; height: 44px;
+    flex-shrink: 0;
+  }
+
+  .callout {
+    background: linear-gradient(135deg, rgba(0, 184, 169, 0.08), rgba(0, 184, 169, 0.02));
+    border-left: 3px solid var(--teal);
+    padding: 18px 24px;
+    border-radius: 4px;
+    margin: 20px 0;
+  }
+  .callout strong { color: var(--teal); }
+
+  .callout-warn {
+    background: linear-gradient(135deg, rgba(245, 179, 68, 0.08), rgba(245, 179, 68, 0.02));
+    border-left: 3px solid var(--amber);
+    padding: 18px 24px;
+    border-radius: 4px;
+    margin: 20px 0;
+  }
+  .callout-warn strong { color: var(--amber); }
+
+  /* Definition / glossary table */
+  .deflist { display: grid; grid-template-columns: 180px 1fr; gap: 14px 28px; }
+  .deflist dt { color: var(--teal); font-weight: 600; font-size: 14px; }
+  .deflist dd { color: var(--ink-2); font-size: 14px; line-height: 1.5; }
+
+  /* Stack visual on slide 3 */
+  .stack { display: flex; flex-direction: column; gap: 8px; }
+  .stack-row {
+    padding: 16px 20px;
+    border-radius: 8px;
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid var(--line-2);
+  }
+  .stack-row span { color: var(--ink-3); font-weight: 400; margin-left: 8px; }
+  .stack-row.lvl-1 { background: rgba(0, 212, 192, 0.15); border-color: rgba(0, 212, 192, 0.3); }
+  .stack-row.lvl-2 { background: rgba(0, 184, 169, 0.12); }
+  .stack-row.lvl-3 { background: rgba(30, 39, 97, 0.5); }
+  .stack-row.lvl-4 { background: rgba(15, 27, 61, 0.8); border-color: rgba(0, 212, 192, 0.4); }
+
+  /* Numbered items */
+  .num-item { display: flex; gap: 20px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .num-item:last-child { border-bottom: none; }
+  .num-item .num {
+    font-family: var(--display);
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--teal);
+    line-height: 1;
+    min-width: 56px;
+    font-feature-settings: 'tnum';
+  }
+  .num-item h4 { margin-bottom: 4px; }
+  .num-item p { font-size: 13px; margin-bottom: 0; }
+
+  /* Flow arrows */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .flow-step {
+    flex: 1;
+    min-width: 0;
+    background: var(--card);
+    border: 1px solid var(--line-2);
+    border-radius: 10px;
+    padding: 18px;
+    text-align: center;
+  }
+  .flow-step.active { background: var(--bg-2); border-color: var(--teal); }
+  .flow-step h4 { color: var(--ink); margin-bottom: 4px; }
+  .flow-step.active h4 { color: var(--teal); }
+  .flow-step p { font-size: 12px; margin-bottom: 0; }
+  .flow .arrow { color: var(--teal); font-size: 24px; flex: 0 0 auto; }
+
+  /* Comparison columns */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .compare > div {
+    padding: 28px;
+    border-radius: 12px;
+    border: 1px solid var(--line-2);
+    background: var(--card);
+  }
+  .compare .eyebrow { color: var(--teal); }
+  .compare h3 { font-family: var(--display); font-size: 28px; margin-bottom: 12px; color: var(--ink); }
+
+  /* Bullets */
+  ul.clean { list-style: none; }
+  ul.clean li {
+    padding: 6px 0;
+    padding-left: 20px;
+    position: relative;
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1.5;
+  }
+  ul.clean li::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 14px;
+    width: 8px; height: 1px;
+    background: var(--teal);
+  }
+
+  /* Three columns dataflow */
+  .dataflow-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .dataflow-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    backdrop-filter: blur(8px);
+  }
+  .dataflow-card .head {
+    padding: 16px 20px;
+    background: var(--bg-3);
+    border-bottom: 1px solid var(--line-2);
+  }
+  .dataflow-card.gen2 .head { background: linear-gradient(135deg, var(--teal-deep), var(--teal-2)); }
+  .dataflow-card .head h4 { color: var(--ink); margin-bottom: 2px; font-family: var(--display); font-size: 20px; font-weight: 600; }
+  .dataflow-card.gen2 .head h4 { color: var(--bg); }
+  .dataflow-card .head .sub { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-3); }
+  .dataflow-card.gen2 .head .sub { color: var(--bg-2); opacity: 0.8; }
+  .dataflow-card .body { padding: 18px 20px; }
+  .dataflow-card .body p { font-size: 13px; }
+  .dataflow-card .meta { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .dataflow-card .meta dt { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-3); margin-top: 8px; }
+  .dataflow-card .meta dd { font-size: 13px; color: var(--ink-2); }
+
+  /* Architecture diagram */
+  .arch-diagram { display: flex; flex-direction: column; gap: 12px; }
+  .arch-tier { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 18px; backdrop-filter: blur(8px); }
+  .arch-tier .tier-label { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; }
+  .arch-tier .tier-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
+  .arch-node {
+    background: rgba(15, 27, 61, 0.6);
+    border: 1px solid var(--line-2);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 13px;
+    text-align: center;
+    color: var(--ink);
+  }
+  .arch-node.workload { background: linear-gradient(135deg, var(--teal-deep), var(--teal-2)); border-color: var(--teal); color: var(--bg); font-weight: 500; }
+  .arch-node.consumer { background: rgba(0, 212, 192, 0.1); border-color: rgba(0, 212, 192, 0.3); }
+  .arch-node.ext-source { border-style: dashed; color: var(--ink-2); font-size: 12px; }
+  .arch-node.onelake { background: linear-gradient(135deg, var(--bg-2), var(--bg-3)); border: 1px solid var(--teal); padding: 18px; font-family: var(--display); font-size: 18px; font-weight: 600; }
+
+  /* Medallion layers */
+  .medallion { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .med-layer {
+    border-radius: 14px;
+    padding: 24px;
+    color: var(--bg);
+    position: relative;
+    overflow: hidden;
+  }
+  .med-layer.bronze { background: linear-gradient(135deg, #C77F3A, #8B5A2B); }
+  .med-layer.silver { background: linear-gradient(135deg, #C0C8D4, #8A95A8); }
+  .med-layer.gold { background: linear-gradient(135deg, #E8C547, #B8941F); }
+  .med-layer h4 { font-family: var(--display); font-size: 28px; font-weight: 700; margin-bottom: 4px; color: var(--bg); }
+  .med-layer .sub { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.7; margin-bottom: 14px; }
+  .med-layer p { color: rgba(15, 27, 61, 0.85); font-size: 13px; margin-bottom: 8px; }
+  .med-layer ul { list-style: none; margin-top: 10px; }
+  .med-layer ul li { font-size: 12px; padding: 3px 0; color: rgba(15, 27, 61, 0.8); }
+  .med-layer ul li::before { content: '· '; }
+
+  /* Persona table */
+  table.personas { width: 100%; border-collapse: collapse; }
+  table.personas th, table.personas td {
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--line);
+    font-size: 14px;
+    vertical-align: top;
+  }
+  table.personas th {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--teal);
+    font-weight: 600;
+  }
+  table.personas td { color: var(--ink-2); }
+  table.personas td:first-child { color: var(--ink); font-weight: 500; }
+  table.personas td:last-child { color: var(--teal); font-style: italic; font-size: 13px; }
+
+  /* Vocab card grid */
+  .vocab-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px 36px; }
+  .vocab-item h5 {
+    font-family: var(--body);
+    font-size: 14px;
+    color: var(--teal);
+    font-weight: 600;
+    margin-bottom: 4px;
+    letter-spacing: 0.02em;
+  }
+  .vocab-item p { font-size: 13px; line-height: 1.45; margin-bottom: 0; }
+
+  /* Title slide */
+  .title-mark {
+    width: 60px;
+    height: 3px;
+    background: var(--teal);
+    margin-bottom: 28px;
+    box-shadow: 0 0 16px var(--teal);
+  }
+
+  /* keyboard hint on first slide */
+  .kbd-hint {
+    margin-top: 80px;
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    color: var(--ink-3);
+    font-size: 12px;
+  }
+  .kbd {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--line-2);
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-2);
+  }
+
+  /* Pretty section header for compact slides */
+  .section-mark {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 6px;
+    font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-3); font-weight: 600;
+  }
+  .section-mark::before {
+    content: ''; width: 28px; height: 1px; background: var(--teal);
+  }
+
+  /* big number display */
+  .big-stat {
+    font-family: var(--display);
+    font-size: 96px;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--teal);
+    letter-spacing: -0.04em;
+  }
+
+  /* Print fallback */
+  @media print {
+    @page { size: 13.33in 7.5in; margin: 0; }
+    html, body { overflow: visible; height: auto; background: var(--bg) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body::before { display: block !important; position: absolute; }
+    .deck { height: auto; background: var(--bg); }
+    .slide {
+      position: relative;
+      width: 13.33in;
+      height: 7.5in;
+      padding: 40px 70px 30px !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto;
+      transform: none !important;
+      page-break-after: always;
+      break-after: page;
+      overflow: hidden;
+      background: var(--bg);
+      transition: none;
+    }
+    .nav, .progress { display: none !important; }
+    #particles { display: none !important; }
+    .kbd-hint { display: none !important; }
+    .lede { margin-bottom: 18px !important; font-size: 19px !important; }
+    h2 { font-size: 38px !important; margin-bottom: 8px !important; }
+    .eyebrow { margin-bottom: 10px !important; }
+    p { margin-bottom: 10px !important; font-size: 15px !important; line-height: 1.5 !important; }
+    .num-item { padding: 9px 0 !important; }
+    .num-item .num { font-size: 26px !important; min-width: 46px !important; }
+    .callout, .callout-warn { padding: 12px 18px !important; margin: 12px 0 !important; }
+    .card { padding: 16px !important; }
+    .card p { font-size: 13px !important; }
+    .header-row { margin-bottom: 4px !important; }
+    .grid-2, .grid-3, .grid-4 { gap: 18px !important; }
+    ul.clean li { padding: 4px 0 4px 20px !important; font-size: 13px !important; }
+  }
+
+  /* responsive */
+  @media (max-width: 1100px) {
+    .slide { padding: 40px 48px 64px; }
+    h1 { font-size: 56px; }
+    h2 { font-size: 36px; }
+    .grid-3, .grid-4, .dataflow-cols, .medallion { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 700px) {
+    .slide { padding: 32px 24px 60px; }
+    .grid-2, .grid-3, .grid-4, .dataflow-cols, .medallion, .compare { grid-template-columns: 1fr; gap: 16px; }
+    h1 { font-size: 40px; }
+    h2 { font-size: 28px; }
+    .deflist { grid-template-columns: 1fr; }
+    .source { left: 24px; bottom: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+<div class="progress" id="progress"></div>
+
+<div class="deck" id="deck">
+
+  <!-- ====================================================================
+       SLIDE 1: TITLE
+  ===================================================================== -->
+  <section class="slide active slide-title">
+    <span class="eyebrow">Microsoft Fabric</span>
+    <h1>Team<br>Orientation.</h1>
+    <div class="title-mark"></div>
+    <p style="font-size: 20px; max-width: 640px;">
+      Understanding the platform, the tools that live inside it,
+      and how it connects to the Power Platform we already use.
+    </p>
+    <div class="kbd-hint">
+      <span><span class="kbd">→</span> next</span>
+      <span><span class="kbd">←</span> prev</span>
+      <span><span class="kbd">F</span> fullscreen</span>
+      <span><span class="kbd">P</span> print</span>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 2: AGENDA
+  ===================================================================== -->
+  <section class="slide">
+    <h2>What we're covering</h2>
+    <span class="lede">Mostly beginner. Some intermediate where it earns it.</span>
+    <div style="margin-top: 24px;">
+      <div class="num-item"><div class="num">01</div><div><h4>The vocabulary</h4><p>Terms you'll hear in Fabric documentation. ETL, Spark, Parquet, ADLS, Git, CI/CD.</p></div></div>
+      <div class="num-item"><div class="num">02</div><div><h4>What Fabric is and what it replaces</h4><p>The platform concept, OneLake, and the older Azure tools Fabric absorbed.</p></div></div>
+      <div class="num-item"><div class="num">03</div><div><h4>Core tools, in depth</h4><p>OneLake, Delta tables, Semantic models, Power Query, Data Factory, Power BI.</p></div></div>
+      <div class="num-item"><div class="num">04</div><div><h4>The other Fabric workloads</h4><p>Lakehouse, Warehouse, Real-Time, Data Science, Activator. One slide each.</p></div></div>
+      <div class="num-item"><div class="num">05</div><div><h4>The Medallion architecture</h4><p>Bronze, Silver, Gold. How to actually structure data work.</p></div></div>
+      <div class="num-item"><div class="num">06</div><div><h4>Fabric vs the Power Platform</h4><p>Where Dataverse, Power Apps, and Power Automate fit. The dataflow confusion.</p></div></div>
+      <div class="num-item"><div class="num">07</div><div><h4>How everything connects</h4><p>The complete map. Personas. Glossary.</p></div></div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 3: VOCABULARY (PART 1)
+  ===================================================================== -->
+  <section class="slide">
+    <span class="eyebrow">Foundation</span>
+    <h2>The vocabulary you'll hear</h2>
+    <span class="lede">Terms that appear constantly in Fabric documentation. Park here as long as needed.</span>
+
+    <div class="vocab-grid" style="margin-top: 24px;">
+      <div class="vocab-item">
+        <h5>Tenant</h5>
+        <p>Your organization's top-level Microsoft cloud space. Stotz Equipment is one tenant. Everyone in the company shares it. Permissions, billing, and policies are all managed at this level.</p>
+      </div>
+      <div class="vocab-item">
+        <h5>ETL (Extract, Transform, Load)</h5>
+        <p>The process of pulling data from a source, reshaping it, and putting it somewhere useful. "Extract from Salesforce, transform into clean rows, load into the warehouse." Most data work is ETL with extra steps.</p>
+      </div>
+      <div class="vocab-item">
+        <h5>Schema</h5>
+        <p>The structure of your data. What columns exist, what types they are (number, text, date), what's required, what's optional. A schema is the contract that says "every row in this table will look like this."</p>
+      </div>
+      <div class="vocab-item">
+        <h5>Stored Procedure</h5>
+        <p>A saved chunk of SQL code that runs against a database. Instead of writing the query every time, you save it once and call it by name. Common for complex business logic that runs on a schedule.</p>
+      </div>
+      <div class="vocab-item">
+        <h5>SQL / T-SQL</h5>
+        <p>SQL is the standard language for querying databases. T-SQL is Microsoft's flavor with extra features (variables, control flow, error handling). If you've written queries in SQL Server, you've written T-SQL.</p>
+      </div>
+      <div class="vocab-item">
+        <h5>Spark / PySpark</h5>
+        <p>Spark is an engine for processing huge datasets across many computers at once. PySpark is the Python interface to Spark. You write Python; Spark distributes the work. Used in data engineering for transformations too big for a single machine.</p>
+      </div>
+      <div class="vocab-item">
+        <h5>Parquet</h5>
+        <p>A file format for tabular data. Unlike CSV, it stores columns separately and compressed. A query that needs three columns from a thousand-column table only reads three column files, not the whole row.</p>
+      </div>
+      <div class="vocab-item">
+        <h5>ACID transactions</h5>
+        <p>The guarantee that database updates either fully succeed or fully fail, with no half-states. If a job updates 1,000 rows and fails on row 500, ACID ensures none of the 500 already-changed rows are kept.</p>
+      </div>
+    </div>
+    <div class="source">1 of 2</div>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 4: VOCABULARY (PART 2)
+  ===================================================================== -->
+  <section class="slide">
+    <span class="eyebrow">Foundation</span>
+    <h2>The vocabulary you'll hear</h2>
+    <span class="lede">Continued. The harder ones get a paragraph.</span>
+
+    <div class="vocab-grid" style="margin-top: 24px;">
+      <div class="vocab-item">
+        <h5>Git</h5>
+        <p>A version control system. Tracks every change to a set of files over time. Two people can edit the same file separately and Git helps merge their work. Originally built for source code; now used for SQL, dataflows, configurations.</p>
+      </div>
+      <div class="vocab-item">
+        <h5>GitHub</h5>
+        <p>A website that hosts Git repositories. The repo lives there, your team's changes sync to it, and it gives you the web UI for reviewing changes, leaving comments, and approving updates before they go live.</p>
+      </div>
+      <div class="vocab-item">
+        <h5>CI/CD</h5>
+        <p>Continuous Integration / Continuous Deployment. Shorthand for: when someone changes code in Git, automated tests run, and if they pass, the change is deployed to production. The point is to ship small changes safely instead of giant scary releases.</p>
+      </div>
+      <div class="vocab-item">
+        <h5>S3 / GCS</h5>
+        <p>Amazon S3 is AWS's cloud file storage. Google Cloud Storage (GCS) is Google's. Both are common places to find data Fabric might need to read. ADLS is Microsoft's equivalent.</p>
+      </div>
+      <div class="vocab-item">
+        <h5>SaaS API</h5>
+        <p>A way to read or write data in a SaaS product programmatically. Salesforce, HubSpot, ServiceNow, Workday, Stripe — all of them expose APIs that pipelines can call to pull data into Fabric.</p>
+      </div>
+      <div class="vocab-item">
+        <h5>Event Stream</h5>
+        <p>A continuous flow of small messages: an IoT sensor emitting a reading every second, a website logging clicks, a payment system reporting transactions. The data never stops; tools have to handle it as it arrives, not in batches.</p>
+      </div>
+      <div class="vocab-item">
+        <h5>Notebook</h5>
+        <p>A document that mixes code, written explanations, and the output of running that code. Used heavily in data science and engineering. Think of it as a hybrid of a Word document and a script.</p>
+      </div>
+      <div class="vocab-item">
+        <h5>KQL (Kusto Query Language)</h5>
+        <p>A query language Microsoft built for time-series and log data. Used in Real-Time Intelligence. SQL-like but optimized for asking "what happened in the last 5 minutes" against huge volumes of events.</p>
+      </div>
+    </div>
+    <div class="source">2 of 2</div>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 5: WHAT FABRIC REPLACES
+  ===================================================================== -->
+  <section class="slide">
+    <span class="eyebrow">Context</span>
+    <h2>What Microsoft Fabric replaces</h2>
+    <span class="lede">Fabric absorbed several Azure tools your team may have heard of. Here's where they fit.</span>
+
+    <div class="compare" style="margin-top: 24px;">
+      <div>
+        <span class="eyebrow" style="color: var(--ink-3);">The old way</span>
+        <h3>Stitched-together Azure services</h3>
+        <p style="font-size: 14px; margin-top: 12px;">Building an analytics stack in Azure used to mean buying and connecting separate products:</p>
+        <ul class="clean" style="margin-top: 12px;">
+          <li><strong>Azure Data Lake Storage (ADLS)</strong> for raw file storage</li>
+          <li><strong>Azure Synapse Analytics</strong> for the SQL warehouse</li>
+          <li><strong>Azure Databricks</strong> for Spark-based engineering and data science</li>
+          <li><strong>Azure Data Factory</strong> for moving and orchestrating data</li>
+          <li><strong>Power BI</strong> for visualization</li>
+        </ul>
+        <p style="font-size: 13px; margin-top: 14px; color: var(--ink-3);">Each had its own permissions, its own bill, its own storage. Data had to be copied between them.</p>
+      </div>
+      <div style="border-color: var(--teal);">
+        <span class="eyebrow">The Fabric way</span>
+        <h3>One SaaS platform</h3>
+        <p style="font-size: 14px; margin-top: 12px;">Fabric collapsed those products into a single service:</p>
+        <ul class="clean" style="margin-top: 12px;">
+          <li><strong>OneLake</strong> replaces standalone ADLS for analytics workloads</li>
+          <li><strong>Fabric Warehouse</strong> covers what Synapse SQL did</li>
+          <li><strong>Fabric Data Engineering</strong> covers what Databricks did (Spark notebooks)</li>
+          <li><strong>Fabric Data Factory</strong> covers what Azure Data Factory did</li>
+          <li><strong>Power BI</strong> is now a workload inside Fabric</li>
+        </ul>
+        <p style="font-size: 13px; margin-top: 14px; color: var(--ink-3);">One bill. One permission model. One storage layer. No copies between products.</p>
+      </div>
+    </div>
+
+    <div class="callout-warn" style="margin-top: 28px;">
+      <strong>About Azure Data Factory specifically:</strong> it still exists and many companies still use it for non-Fabric Azure workloads. It is not deprecated. But Microsoft is steering all new development toward Fabric Data Factory, and the two share most of the same concepts (pipelines, copy activities, triggers).
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 6: WHAT FABRIC IS
+  ===================================================================== -->
+  <section class="slide">
+    <span class="eyebrow">Concept</span>
+    <h2>What Microsoft Fabric is</h2>
+    <span class="lede">One SaaS platform for analytics. One data lake underneath. Many workloads on top.</span>
+
+    <div class="grid-2" style="margin-top: 24px;">
+      <div>
+        <p>Fabric is a single product that handles every step of working with data: getting it from sources, transforming it, storing it, analyzing it, and visualizing it.</p>
+        <p>The architectural insight is that all of those steps share one storage layer called OneLake. A pipeline writes a table. A notebook reads that same table without exporting. A Power BI report visualizes it without importing. No data movement between Fabric services.</p>
+        <p>This is the difference from the old Azure stack, where every product had its own storage and data had to be copied between them.</p>
+      </div>
+      <div>
+        <span class="section-mark">The Stack</span>
+        <div class="stack" style="margin-top: 12px;">
+          <div class="stack-row lvl-1">Power BI <span>· Reports & dashboards</span></div>
+          <div class="stack-row lvl-2">Workloads <span>· Engineering, Warehouse, Real-Time, Science</span></div>
+          <div class="stack-row lvl-3">Data Factory <span>· Pipelines & Dataflows Gen2</span></div>
+          <div class="stack-row lvl-4">OneLake <span>· Single storage, Delta Parquet format</span></div>
+        </div>
+        <p style="margin-top: 16px; font-size: 13px; font-style: italic; color: var(--ink-3);">Each layer reads from and writes to OneLake. No data movement between them.</p>
+      </div>
+    </div>
+    <div class="source">Source: Microsoft Learn · Fabric architecture overview</div>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 7: ONELAKE
+  ===================================================================== -->
+  <section class="slide">
+    <div class="header-row">
+      <div class="icon-title">
+        <svg viewBox="0 0 48 48" fill="none">
+          <path d="M24 6 L42 16 V32 L24 42 L6 32 V16 Z" stroke="#00D4C0" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M6 16 L24 26 L42 16" stroke="#00D4C0" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M24 26 V42" stroke="#00D4C0" stroke-width="2"/>
+        </svg>
+        <h2 style="margin: 0;">OneLake</h2>
+      </div>
+      <span class="pill">Foundation</span>
+    </div>
+    <span class="lede">"The OneDrive for data." One logical data lake, automatic with every Fabric tenant.</span>
+
+    <div class="grid-3" style="margin-top: 24px;">
+      <div class="card card-accent">
+        <h4>One per tenant</h4>
+        <p>Stotz Equipment has one OneLake. You can't create more, can't delete it. Every workspace stores its data there automatically. No infrastructure to provision.</p>
+      </div>
+      <div class="card card-accent">
+        <h4>Open file format</h4>
+        <p>Tables stored as Delta Parquet, an open standard. Fabric, Spark, Databricks, even Snowflake can read the same files. No proprietary lock-in.</p>
+      </div>
+      <div class="card card-accent">
+        <h4>Shared by every workload</h4>
+        <p>Lakehouses, Warehouses, Power BI, notebooks — all read and write OneLake. The same table is accessible to every tool without copies or exports.</p>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 24px;">
+      <strong>How OneLake is organized:</strong> &nbsp;
+      <code>Tenant → Workspaces → Items (Lakehouses, Warehouses, Reports) → Files & Tables</code>
+      <p style="margin-top: 8px; font-size: 13px;">Workspaces are the security and collaboration boundary. Permissions are granted per workspace. Within a workspace, items are the things you create.</p>
+    </div>
+    <div class="source">Source: Microsoft Learn · learn.microsoft.com/fabric/onelake</div>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 8: SHORTCUTS DEEP DIVE
+  ===================================================================== -->
+  <section class="slide">
+    <span class="eyebrow">OneLake feature</span>
+    <h2>Shortcuts</h2>
+    <span class="lede">Pointers, not copies. The most useful OneLake feature for multi-source work.</span>
+
+    <div class="grid-2" style="margin-top: 24px;">
+      <div>
+        <p>A shortcut is a reference inside OneLake that points to data living somewhere else. The data isn't moved. It isn't copied. OneLake just records "data X lives over there, treat it like it's here."</p>
+        <p>When a query runs against a shortcut, Fabric reads through to the actual source at query time.</p>
+        <h4 style="margin-top: 24px; color: var(--teal);">A concrete example</h4>
+        <p>Your sales team's CSV exports land in an Amazon S3 bucket. Instead of copying them into OneLake nightly:</p>
+        <ul class="clean">
+          <li>Create a shortcut from your Lakehouse pointing at the S3 bucket</li>
+          <li>The CSV files appear in your Lakehouse Files section as if they lived there</li>
+          <li>A Power BI report can query them. A notebook can transform them.</li>
+          <li>S3 stays the source of truth. No sync job to maintain.</li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="margin-bottom: 14px;">What shortcuts can point at</h4>
+        <div class="card" style="margin-bottom: 12px;">
+          <h4 style="font-size: 14px; margin-bottom: 4px;">Inside OneLake</h4>
+          <p>Other workspaces, other Lakehouses. Lets one team reference another team's curated tables.</p>
+        </div>
+        <div class="card" style="margin-bottom: 12px;">
+          <h4 style="font-size: 14px; margin-bottom: 4px;">External storage</h4>
+          <p>ADLS Gen2 (Microsoft), S3 (AWS), GCS (Google). The cloud where the data lives doesn't matter.</p>
+        </div>
+        <div class="card">
+          <h4 style="font-size: 14px; margin-bottom: 4px;">Dataverse</h4>
+          <p>This is what Link to Fabric uses. Dataverse data appears in OneLake without leaving Dataverse.</p>
+        </div>
+        <div class="callout-warn" style="margin-top: 14px;">
+          <strong>Watch the egress:</strong> reads against an S3 shortcut hit S3 every time. AWS charges egress fees. Frequent queries add up.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 9: DELTA PARQUET DEEP DIVE
+  ===================================================================== -->
+  <section class="slide">
+    <span class="eyebrow">Foundation</span>
+    <h2>What Delta Parquet actually is</h2>
+    <span class="lede">Two ideas stacked. Parquet is the file format. Delta is the transaction layer.</span>
+
+    <div class="grid-2" style="margin-top: 24px;">
+      <div>
+        <h4 style="color: var(--teal); margin-bottom: 8px;">Parquet</h4>
+        <p>A file format optimized for analytics. The key difference from CSV: Parquet stores data column by column, not row by row.</p>
+        <p>If a table has 100 columns and your query asks about 3 of them, Parquet only reads those 3. CSV would have to read every byte of every row.</p>
+        <p>It's also compressed. A Parquet file is typically 70-90% smaller than the equivalent CSV.</p>
+
+        <h4 style="color: var(--teal); margin-top: 24px; margin-bottom: 8px;">Delta</h4>
+        <p>A layer on top of Parquet. A Delta table is a folder of Parquet files plus a transaction log that tracks every change.</p>
+        <p>The log is what makes a folder of files behave like a database table. Updates, deletes, schema changes, time travel — all of it works because Delta records what happened and when.</p>
+      </div>
+      <div>
+        <span class="section-mark">What Delta gives you</span>
+        <div style="margin-top: 16px;">
+          <div class="num-item">
+            <div class="num">01</div>
+            <div>
+              <h4>ACID transactions</h4>
+              <p>An update either fully succeeds or fully rolls back. No half-updated tables.</p>
+            </div>
+          </div>
+          <div class="num-item">
+            <div class="num">02</div>
+            <div>
+              <h4>Time travel</h4>
+              <p>Query the table as it looked yesterday, last week, or at a specific transaction. The log keeps history.</p>
+            </div>
+          </div>
+          <div class="num-item">
+            <div class="num">03</div>
+            <div>
+              <h4>Schema enforcement</h4>
+              <p>Bad data gets rejected at write time, not silently appended. The table's column types are a contract.</p>
+            </div>
+          </div>
+          <div class="num-item">
+            <div class="num">04</div>
+            <div>
+              <h4>Concurrent writers</h4>
+              <p>Multiple jobs can write to the same table without corrupting state.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 20px;">
+      <strong>Why it matters:</strong> Delta is the universal table format inside Fabric. When someone says "the table" in Fabric, they usually mean a Delta table. The Lakehouse exposes them, the Warehouse creates them under the hood, and Power BI can read them through DirectLake mode without importing.
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 10: SEMANTIC MODELS (corrected)
+  ===================================================================== -->
+  <section class="slide">
+    <div class="header-row">
+      <div class="icon-title">
+        <svg viewBox="0 0 48 48" fill="none">
+          <rect x="6" y="6" width="14" height="14" rx="2" stroke="#00D4C0" stroke-width="2"/>
+          <rect x="28" y="6" width="14" height="14" rx="2" stroke="#00D4C0" stroke-width="2"/>
+          <rect x="17" y="28" width="14" height="14" rx="2" stroke="#00D4C0" stroke-width="2"/>
+          <line x1="20" y1="13" x2="28" y2="13" stroke="#00D4C0" stroke-width="2"/>
+          <line x1="13" y1="20" x2="20" y2="28" stroke="#00D4C0" stroke-width="2"/>
+          <line x1="35" y1="20" x2="28" y2="28" stroke="#00D4C0" stroke-width="2"/>
+        </svg>
+        <h2 style="margin: 0;">Semantic Models</h2>
+      </div>
+      <span class="pill">Core tool</span>
+    </div>
+    <span class="lede">The business logic layer. Where raw tables become "Revenue," "Customer," and "Active Account."</span>
+
+    <div class="grid-2" style="margin-top: 24px;">
+      <div>
+        <p>A semantic model (formerly called a Power BI dataset) is a layer on top of your tables that defines <strong>relationships</strong>, <strong>measures</strong>, and <strong>hierarchies</strong>.</p>
+        <p>It connects your fact tables to your dimension tables. It's where DAX measures like "Total Sales" or "YoY Growth" are authored. And it's where the column names users actually see in reports get standardized.</p>
+        <p>Multiple Power BI reports can share one semantic model. Define the metric once, every report calling it shows the same number.</p>
+
+        <div class="callout">
+          <strong>Power Query vs DAX clarification:</strong>
+          <p style="font-size: 13px; margin-top: 8px;">Power Query (M language) reshapes data <em>before</em> it lands in the model — renaming columns, filtering rows, merging tables. DAX is authored <em>in</em> the model itself, in Power BI Desktop's data view, after the data is loaded. They're sequential, not the same thing.</p>
+        </div>
+      </div>
+      <div>
+        <span class="section-mark">The flow</span>
+        <div class="flow" style="margin-top: 16px; flex-direction: column;">
+          <div class="flow-step" style="width: 100%;">
+            <h4>Tables</h4>
+            <p>Raw data in OneLake. Product, Order, Customer.</p>
+          </div>
+          <div class="arrow">↓</div>
+          <div class="flow-step" style="width: 100%;">
+            <h4>Power Query</h4>
+            <p>Clean, filter, reshape. Output goes into the model.</p>
+          </div>
+          <div class="arrow">↓</div>
+          <div class="flow-step active" style="width: 100%;">
+            <h4>Semantic Model</h4>
+            <p>Relationships defined. DAX measures written here.</p>
+          </div>
+          <div class="arrow">↓</div>
+          <div class="flow-step" style="width: 100%;">
+            <h4>Reports</h4>
+            <p>Visuals built on the model's measures.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 11: POWER QUERY
+  ===================================================================== -->
+  <section class="slide">
+    <div class="header-row">
+      <div class="icon-title">
+        <svg viewBox="0 0 48 48" fill="none">
+          <path d="M8 12 L20 12 L20 18 L8 18 Z M28 12 L40 12 L40 18 L28 18 Z M14 24 L34 24 M14 30 L34 30 M14 36 L34 36" stroke="#00D4C0" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="14" cy="15" r="2" fill="#00D4C0"/>
+          <circle cx="34" cy="15" r="2" fill="#00D4C0"/>
+        </svg>
+        <h2 style="margin: 0;">Power Query</h2>
+      </div>
+      <span class="pill">Core tool</span>
+    </div>
+    <span class="lede">Not exclusively a Fabric tool. A transformation engine that shows up everywhere Microsoft does data.</span>
+
+    <div style="margin-top: 24px; max-width: 900px;">
+      <p>Power Query is Microsoft's no-code/low-code data transformation engine. You point it at a source, click steps to clean and reshape data (rename columns, filter rows, pivot, merge, etc.), and it records those steps as a script in a language called <strong>M</strong>.</p>
+    </div>
+
+    <h4 style="margin-top: 28px; margin-bottom: 16px;">Where you'll meet it</h4>
+    <div class="grid-3">
+      <div class="card">
+        <span class="pill" style="background: rgba(180, 200, 230, 0.06); color: var(--ink-2); border-color: var(--line-2);">Familiar</span>
+        <h4 style="margin-top: 12px;">Excel</h4>
+        <p>"Get & Transform" feature. Same engine, smaller scale.</p>
+      </div>
+      <div class="card">
+        <span class="pill" style="background: rgba(180, 200, 230, 0.06); color: var(--ink-2); border-color: var(--line-2);">Familiar</span>
+        <h4 style="margin-top: 12px;">Power BI Desktop</h4>
+        <p>The "Transform Data" button opens Power Query.</p>
+      </div>
+      <div class="card">
+        <span class="pill pill-amber">Legacy</span>
+        <h4 style="margin-top: 12px;">Dataflows Gen1</h4>
+        <p>The whole tool is Power Query, hosted in Power BI service.</p>
+      </div>
+      <div class="card card-accent">
+        <span class="pill">Fabric</span>
+        <h4 style="margin-top: 12px;">Dataflows Gen2</h4>
+        <p>Same Power Query, runs on Fabric's SQL compute. Writes to OneLake.</p>
+      </div>
+      <div class="card">
+        <span class="pill" style="background: rgba(180, 200, 230, 0.06); color: var(--ink-2); border-color: var(--line-2);">Power Platform</span>
+        <h4 style="margin-top: 12px;">Dataverse Dataflows</h4>
+        <p>Same Power Query, lands data in Dataverse tables.</p>
+      </div>
+      <div class="card">
+        <span class="pill" style="background: rgba(180, 200, 230, 0.06); color: var(--ink-2); border-color: var(--line-2);">Tools</span>
+        <h4 style="margin-top: 12px;">Analysis Services, Dynamics 365</h4>
+        <p>Same engine appears in other Microsoft data tools too.</p>
+      </div>
+    </div>
+
+    <p style="margin-top: 22px; font-size: 13px; font-style: italic; color: var(--ink-3);">Same engine, different containers. Learning Power Query once pays off across all of these.</p>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 12: DATA FACTORY
+  ===================================================================== -->
+  <section class="slide">
+    <div class="header-row">
+      <div class="icon-title">
+        <svg viewBox="0 0 48 48" fill="none">
+          <circle cx="14" cy="14" r="6" stroke="#00D4C0" stroke-width="2"/>
+          <circle cx="34" cy="14" r="6" stroke="#00D4C0" stroke-width="2"/>
+          <circle cx="24" cy="34" r="6" stroke="#00D4C0" stroke-width="2"/>
+          <line x1="20" y1="14" x2="28" y2="14" stroke="#00D4C0" stroke-width="2"/>
+          <line x1="17" y1="20" x2="22" y2="29" stroke="#00D4C0" stroke-width="2"/>
+          <line x1="31" y1="20" x2="26" y2="29" stroke="#00D4C0" stroke-width="2"/>
+        </svg>
+        <h2 style="margin: 0;">Data Factory</h2>
+      </div>
+      <span class="pill">Core tool</span>
+    </div>
+    <span class="lede">How data gets into Fabric and how transformations get scheduled.</span>
+
+    <div class="compare" style="margin-top: 24px;">
+      <div>
+        <span class="eyebrow" style="color: var(--ink-3);">Tool 1</span>
+        <h3>Pipelines</h3>
+        <p style="font-size: 14px; font-style: italic; color: var(--ink-3);">Orchestration. The "do this, then this, then this" tool.</p>
+        <ul class="clean" style="margin-top: 14px;">
+          <li>Copy Data activities to move data between sources and OneLake</li>
+          <li>Notebooks, stored procedures, and Dataflows can all be steps</li>
+          <li>Triggers: scheduled, on-demand, or event-based</li>
+          <li>Conditional branching, loops, and parallel execution</li>
+          <li>Replaces Azure Data Factory for Fabric workloads</li>
+        </ul>
+      </div>
+      <div style="border-color: var(--teal);">
+        <span class="eyebrow">Tool 2</span>
+        <h3>Dataflows Gen2</h3>
+        <p style="font-size: 14px; font-style: italic; color: var(--teal);">Transformation. Power Query at Fabric scale.</p>
+        <ul class="clean" style="margin-top: 14px;">
+          <li>Power Query Online interface (the same one Excel users know)</li>
+          <li>Connects to 100+ sources, lands output in Lakehouse, Warehouse, or KQL DB</li>
+          <li>Backed by Fabric SQL compute (faster than Gen1)</li>
+          <li>Auto-saves, supports CI/CD and Git integration as of April 2026</li>
+          <li>Can be invoked as a step inside a Pipeline</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 24px;">
+      <strong>Rule of thumb:</strong> Dataflows Gen2 to transform. Pipelines to orchestrate. Often used together — a Pipeline runs on a schedule, calls a Dataflow Gen2 as one step, then runs a notebook as the next step.
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 13: POWER BI + CONNECTION MODES
+  ===================================================================== -->
+  <section class="slide">
+    <div class="header-row">
+      <div class="icon-title">
+        <svg viewBox="0 0 48 48" fill="none">
+          <rect x="8" y="22" width="6" height="20" fill="#00D4C0"/>
+          <rect x="20" y="14" width="6" height="28" fill="#00D4C0"/>
+          <rect x="32" y="6" width="6" height="36" fill="#00D4C0"/>
+        </svg>
+        <h2 style="margin: 0;">Power BI</h2>
+      </div>
+      <span class="pill">Core tool</span>
+    </div>
+    <span class="lede">The visualization layer. Now a workload inside Fabric, not a separate product.</span>
+
+    <p style="margin-top: 20px; max-width: 900px;">
+      Power BI is the same tool your team has likely used for years. The change with Fabric is administrative: Power BI workspaces are now Fabric workspaces. Premium capacity is now Fabric capacity. Reports, semantic models, and dashboards are now "items" inside Fabric alongside Lakehouses and Notebooks.
+    </p>
+
+    <h4 style="margin-top: 28px; margin-bottom: 14px;">The three connection modes</h4>
+    <div class="grid-3">
+      <div class="card">
+        <span class="pill" style="background: rgba(180, 200, 230, 0.06); color: var(--ink-2); border-color: var(--line-2);">Mode 1</span>
+        <h4 style="margin-top: 10px;">Import</h4>
+        <p>Data is copied <em>into</em> the model file (the .pbix). Stored compressed in memory. Queries are blazing fast because they hit RAM.</p>
+        <p style="margin-top: 10px; color: var(--ink-3);"><strong style="color: var(--ink-2);">Tradeoff:</strong> data is stale until the next scheduled refresh. Models can get huge — gigabytes for big datasets.</p>
+      </div>
+      <div class="card">
+        <span class="pill" style="background: rgba(180, 200, 230, 0.06); color: var(--ink-2); border-color: var(--line-2);">Mode 2</span>
+        <h4 style="margin-top: 10px;">DirectQuery</h4>
+        <p>Queries hit the source database live, every time a visual loads. Always current.</p>
+        <p style="margin-top: 10px; color: var(--ink-3);"><strong style="color: var(--ink-2);">Tradeoff:</strong> slower interactions. Heavy load on the source. Some DAX features unavailable.</p>
+      </div>
+      <div class="card card-accent">
+        <span class="pill">Fabric-native</span>
+        <h4 style="margin-top: 10px;">DirectLake</h4>
+        <p>Reads Delta tables in OneLake directly at query time. Import-mode speed without a separate copy of the data.</p>
+        <p style="margin-top: 10px; color: var(--teal);"><strong>This is the new default for Fabric work.</strong> No refresh schedule, no synchronization lag.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 14: LAKEHOUSE
+  ===================================================================== -->
+  <section class="slide">
+    <div class="header-row">
+      <div class="icon-title">
+        <svg viewBox="0 0 48 48" fill="none">
+          <path d="M6 16 Q24 8, 42 16" stroke="#00D4C0" stroke-width="2" fill="none"/>
+          <path d="M6 24 Q24 16, 42 24" stroke="#00D4C0" stroke-width="2" fill="none"/>
+          <path d="M6 32 Q24 24, 42 32" stroke="#00D4C0" stroke-width="2" fill="none"/>
+          <path d="M6 16 V40 H42 V16" stroke="#00D4C0" stroke-width="2" fill="none"/>
+        </svg>
+        <h2 style="margin: 0;">Lakehouse</h2>
+      </div>
+      <span class="pill">Workload</span>
+    </div>
+    <span class="lede">A workspace item that organizes both files and Delta tables. The data engineer's home base.</span>
+
+    <div class="grid-2" style="margin-top: 24px;">
+      <div>
+        <p>A Lakehouse has two sides:</p>
+        <ul class="clean">
+          <li><strong>Files</strong> — unstructured or semi-structured data. CSVs, JSON, Parquet, images, anything.</li>
+          <li><strong>Tables</strong> — Delta tables that can be queried with SQL.</li>
+        </ul>
+        <p style="margin-top: 16px;">You ingest raw data into Files, then transform it into Tables. The Tables side is automatically queryable through a SQL endpoint, even if the data was loaded by a Spark notebook.</p>
+        <p>It's the most common starting point in Fabric. If your team is exploring data without strong opinions on structure yet, you put it in a Lakehouse.</p>
+      </div>
+      <div>
+        <h4 style="margin-bottom: 12px;">When to use a Lakehouse</h4>
+        <div class="card" style="margin-bottom: 10px;">
+          <p>Loading raw data from many sources before deciding on schema</p>
+        </div>
+        <div class="card" style="margin-bottom: 10px;">
+          <p>Mixing structured tables with files (PDFs, images, JSON logs)</p>
+        </div>
+        <div class="card" style="margin-bottom: 10px;">
+          <p>Spark-based transformations using Python or Scala notebooks</p>
+        </div>
+        <div class="card">
+          <p>Building Bronze and Silver layers in a Medallion architecture</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 15: WAREHOUSE
+  ===================================================================== -->
+  <section class="slide">
+    <div class="header-row">
+      <div class="icon-title">
+        <svg viewBox="0 0 48 48" fill="none">
+          <path d="M6 18 L24 8 L42 18 V40 H6 Z" stroke="#00D4C0" stroke-width="2" stroke-linejoin="round"/>
+          <line x1="6" y1="22" x2="42" y2="22" stroke="#00D4C0" stroke-width="2"/>
+          <rect x="14" y="28" width="8" height="12" stroke="#00D4C0" stroke-width="2"/>
+          <rect x="26" y="28" width="8" height="12" stroke="#00D4C0" stroke-width="2"/>
+        </svg>
+        <h2 style="margin: 0;">Warehouse</h2>
+      </div>
+      <span class="pill">Workload</span>
+    </div>
+    <span class="lede">Same OneLake storage, but a fully transactional T-SQL surface. The SQL developer's home base.</span>
+
+    <div class="grid-2" style="margin-top: 24px;">
+      <div>
+        <p>The Warehouse is what you use when you want to work with data using T-SQL stored procedures, the way SQL developers have for decades.</p>
+        <p>Under the hood, the Warehouse stores its tables as Delta Parquet in OneLake — same format as a Lakehouse. The difference is the developer experience: full T-SQL support, ACID transactions across multiple tables in a single statement, native stored procedures, views, security with row-level filtering.</p>
+        <p>A Warehouse table is readable from a Lakehouse and vice versa. The format is shared. Choose based on who's writing the code.</p>
+      </div>
+      <div>
+        <h4 style="margin-bottom: 12px;">When to use a Warehouse</h4>
+        <div class="card" style="margin-bottom: 10px;">
+          <p>Team is SQL-fluent and prefers T-SQL over Python or Spark</p>
+        </div>
+        <div class="card" style="margin-bottom: 10px;">
+          <p>Need traditional warehouse features: stored procs, views, schemas, fine-grained permissions</p>
+        </div>
+        <div class="card" style="margin-bottom: 10px;">
+          <p>Multi-table transactional updates that must commit atomically</p>
+        </div>
+        <div class="card">
+          <p>Building the Gold layer in a Medallion architecture (curated, business-ready data)</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 16: DATA ENGINEERING
+  ===================================================================== -->
+  <section class="slide">
+    <div class="header-row">
+      <div class="icon-title">
+        <svg viewBox="0 0 48 48" fill="none">
+          <path d="M14 14 L6 24 L14 34" stroke="#00D4C0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M34 14 L42 24 L34 34" stroke="#00D4C0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <line x1="28" y1="10" x2="20" y2="38" stroke="#00D4C0" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <h2 style="margin: 0;">Data Engineering</h2>
+      </div>
+      <span class="pill">Workload</span>
+    </div>
+    <span class="lede">Spark notebooks for code-first transformations. Where the heavy lifting happens.</span>
+
+    <div class="grid-2" style="margin-top: 24px;">
+      <div>
+        <p>Data Engineering is the workload for writing code-based data transformations against Lakehouse tables. The interface is Jupyter-style notebooks — the same notebook concept used in data science, just pointed at production data.</p>
+        <p>You write PySpark (Python on Spark), Scala, Spark SQL, or R. Fabric runs the code on a managed Spark cluster. No infrastructure to provision.</p>
+        <p>This is what you reach for when Power Query and Dataflows Gen2 hit their limits — complex multi-step transformations, custom logic, performance tuning, processing data that's too large for the no-code tools to handle gracefully.</p>
+        <p>Notebooks can be saved, scheduled, and called from Pipelines as part of larger workflows.</p>
+      </div>
+      <div>
+        <h4 style="margin-bottom: 12px;">When to use Data Engineering</h4>
+        <div class="card" style="margin-bottom: 10px;">
+          <p>Transformations are too complex or too large for Dataflows Gen2</p>
+        </div>
+        <div class="card" style="margin-bottom: 10px;">
+          <p>You need version-controlled, code-reviewed transformation logic</p>
+        </div>
+        <div class="card" style="margin-bottom: 10px;">
+          <p>Existing PySpark or Databricks code needs to run inside Fabric</p>
+        </div>
+        <div class="card">
+          <p>Production-grade Bronze→Silver→Gold pipelines that demand reliability</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 17: REAL-TIME INTELLIGENCE
+  ===================================================================== -->
+  <section class="slide">
+    <div class="header-row">
+      <div class="icon-title">
+        <svg viewBox="0 0 48 48" fill="none">
+          <path d="M24 6 L18 28 L26 28 L20 42" stroke="#00D4C0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="rgba(0, 212, 192, 0.15)"/>
+        </svg>
+        <h2 style="margin: 0;">Real-Time Intelligence</h2>
+      </div>
+      <span class="pill">Workload</span>
+    </div>
+    <span class="lede">For data that arrives continuously instead of in batches. IoT, telemetry, financial feeds.</span>
+
+    <div class="grid-2" style="margin-top: 24px;">
+      <div>
+        <p>Real-Time Intelligence handles streaming data. Where a Lakehouse holds tables that are updated periodically by pipelines, Real-Time Intelligence handles data arriving as a continuous flow.</p>
+        <p>Three concepts you'll hear in this space:</p>
+        <ul class="clean">
+          <li><strong>Eventstream</strong> — the ingestion layer. Connects to sources like Azure Event Hubs, Kafka, IoT Hub. Routes events to destinations.</li>
+          <li><strong>Eventhouse</strong> — the storage. A KQL database optimized for time-series and log data. Queryable in seconds even at billions of rows.</li>
+          <li><strong>Real-Time Dashboards</strong> — visualizations that update as new events arrive.</li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="margin-bottom: 12px;">When to use Real-Time Intelligence</h4>
+        <div class="card" style="margin-bottom: 10px;">
+          <p>Equipment telemetry from machines on a job site or facility</p>
+        </div>
+        <div class="card" style="margin-bottom: 10px;">
+          <p>Application logs that need real-time alerting</p>
+        </div>
+        <div class="card" style="margin-bottom: 10px;">
+          <p>Customer activity streams (clicks, transactions, support events)</p>
+        </div>
+        <div class="card">
+          <p>Anything where "what happened in the last 5 minutes" matters</p>
+        </div>
+      </div>
+    </div>
+    <p style="margin-top: 18px; font-size: 13px; color: var(--ink-3); font-style: italic;">Eventhouse data also lives in OneLake, so it can be joined with batch data from Lakehouses or Warehouses.</p>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 18: DATA SCIENCE
+  ===================================================================== -->
+  <section class="slide">
+    <div class="header-row">
+      <div class="icon-title">
+        <svg viewBox="0 0 48 48" fill="none">
+          <circle cx="24" cy="24" r="14" stroke="#00D4C0" stroke-width="2"/>
+          <circle cx="24" cy="24" r="6" fill="#00D4C0"/>
+          <line x1="24" y1="6" x2="24" y2="12" stroke="#00D4C0" stroke-width="2"/>
+          <line x1="24" y1="36" x2="24" y2="42" stroke="#00D4C0" stroke-width="2"/>
+          <line x1="6" y1="24" x2="12" y2="24" stroke="#00D4C0" stroke-width="2"/>
+          <line x1="36" y1="24" x2="42" y2="24" stroke="#00D4C0" stroke-width="2"/>
+        </svg>
+        <h2 style="margin: 0;">Data Science</h2>
+      </div>
+      <span class="pill">Workload</span>
+    </div>
+    <span class="lede">Machine learning lifecycle, end to end, against Lakehouse data.</span>
+
+    <div class="grid-2" style="margin-top: 24px;">
+      <div>
+        <p>Data Science is Fabric's workload for building and deploying machine learning models. The workspace is Jupyter-style notebooks backed by managed Spark, with access to the full Python ML ecosystem — scikit-learn, XGBoost, PyTorch, TensorFlow.</p>
+        <p>Fabric integrates MLflow natively. MLflow is the open-source standard for tracking experiments (which model, which parameters, which metrics) and registering trained models for deployment.</p>
+        <p>Trained models can run batch predictions directly against Lakehouse tables using a function called PREDICT. No separate serving infrastructure for batch inference.</p>
+        <p>The advantage of doing this inside Fabric: feature tables built by data engineers in the Lakehouse are immediately accessible in ML notebooks. No copying or re-ingesting data.</p>
+      </div>
+      <div>
+        <h4 style="margin-bottom: 12px;">When to use Data Science</h4>
+        <div class="card" style="margin-bottom: 10px;">
+          <p>Predictive maintenance models against equipment telemetry</p>
+        </div>
+        <div class="card" style="margin-bottom: 10px;">
+          <p>Demand forecasting using historical sales data</p>
+        </div>
+        <div class="card" style="margin-bottom: 10px;">
+          <p>Customer segmentation or churn prediction</p>
+        </div>
+        <div class="card">
+          <p>Any ML work that benefits from co-locating models and training data</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 19: ACTIVATOR
+  ===================================================================== -->
+  <section class="slide">
+    <div class="header-row">
+      <div class="icon-title">
+        <svg viewBox="0 0 48 48" fill="none">
+          <circle cx="24" cy="24" r="6" fill="#00D4C0"/>
+          <circle cx="24" cy="24" r="12" stroke="#00D4C0" stroke-width="2" stroke-opacity="0.6"/>
+          <circle cx="24" cy="24" r="18" stroke="#00D4C0" stroke-width="2" stroke-opacity="0.3"/>
+        </svg>
+        <h2 style="margin: 0;">Activator</h2>
+      </div>
+      <span class="pill">Workload</span>
+    </div>
+    <span class="lede">The "if this, then that" layer. Watches data and triggers actions when conditions are met.</span>
+
+    <div class="grid-2" style="margin-top: 24px;">
+      <div>
+        <p>Activator (also called "Data Activator") is the workload that turns data into action. You point it at a stream or a table, define a condition, and tell it what to do when the condition is true.</p>
+        <p>The actions it can trigger include: send an email, post to Teams, call a Power Automate flow, kick off a Fabric notebook. The "Power Automate flow" hook is the bridge to the Power Platform — a data signal in Fabric can launch a workflow that updates a Dataverse record.</p>
+
+        <div class="callout" style="margin-top: 22px;">
+          <strong>A concrete example:</strong>
+          <p style="font-size: 13px; margin-top: 8px;">Inventory data lands in OneLake every hour. Activator watches a stock-on-hand table. When any product drops below its reorder threshold, Activator triggers a Power Automate flow that creates a purchase request record in Dataverse and emails the relevant manager.</p>
+        </div>
+      </div>
+      <div>
+        <h4 style="margin-bottom: 12px;">When to use Activator</h4>
+        <div class="card" style="margin-bottom: 10px;">
+          <p>Threshold-based alerts that trigger business actions, not just notifications</p>
+        </div>
+        <div class="card" style="margin-bottom: 10px;">
+          <p>Bridging analytics insights to Power Platform automations</p>
+        </div>
+        <div class="card" style="margin-bottom: 10px;">
+          <p>Replacing custom monitoring scripts with declarative rules</p>
+        </div>
+        <div class="card">
+          <p>Anywhere Power BI dashboards are being checked manually for "is X red?"</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 20: MEDALLION ARCHITECTURE (the big new slide)
+  ===================================================================== -->
+  <section class="slide">
+    <span class="eyebrow">Pattern</span>
+    <h2>The Medallion Architecture</h2>
+    <span class="lede">How to organize data work so it stays maintainable as it grows. Bronze, Silver, Gold.</span>
+
+    <p style="max-width: 1000px; margin-top: 20px;">
+      Medallion is a structural pattern, not a Fabric feature. It's the convention that has emerged for organizing analytics data in three layers, each progressively cleaner and closer to business use. Most mature Fabric deployments follow it.
+    </p>
+
+    <div class="medallion" style="margin-top: 28px;">
+      <div class="med-layer bronze">
+        <h4>Bronze</h4>
+        <div class="sub">Raw</div>
+        <p><strong>Goal:</strong> capture source data exactly as it arrives. Don't transform. Don't filter.</p>
+        <ul>
+          <li>Salesforce export, raw CSV</li>
+          <li>API responses, untouched JSON</li>
+          <li>Database mirror, byte-for-byte</li>
+          <li>Equipment telemetry, raw events</li>
+        </ul>
+        <p style="margin-top: 12px; font-size: 12px;"><strong>If something breaks downstream, you can always rebuild from Bronze.</strong></p>
+      </div>
+      <div class="med-layer silver">
+        <h4>Silver</h4>
+        <div class="sub">Cleaned</div>
+        <p><strong>Goal:</strong> data that's technically correct. Joined, deduplicated, validated.</p>
+        <ul>
+          <li>Standardized column names</li>
+          <li>Type-corrected (dates as dates)</li>
+          <li>Bad rows filtered or flagged</li>
+          <li>Foreign keys resolved</li>
+        </ul>
+        <p style="margin-top: 12px; font-size: 12px;"><strong>Silver is trustworthy enough for engineers, but not for executives.</strong></p>
+      </div>
+      <div class="med-layer gold">
+        <h4>Gold</h4>
+        <div class="sub">Curated</div>
+        <p><strong>Goal:</strong> business-ready datasets. Aggregated, modeled, named in business terms.</p>
+        <ul>
+          <li>Sales by region by month</li>
+          <li>Customer 360 (joined view)</li>
+          <li>Active equipment fleet metrics</li>
+          <li>KPI tables for dashboards</li>
+        </ul>
+        <p style="margin-top: 12px; font-size: 12px;"><strong>Gold tables are what semantic models and reports point at.</strong></p>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 24px;">
+      <strong>How this maps to Fabric tools:</strong> Bronze typically lives in a Lakehouse (raw files or tables). Silver lives in a Lakehouse or Warehouse. Gold often lives in a Warehouse for SQL teams or as curated Lakehouse tables for engineering teams. Each layer can be a separate workspace for governance and access control.
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 21: CAPACITY UNITS
+  ===================================================================== -->
+  <section class="slide">
+    <span class="eyebrow">Operations</span>
+    <h2>Capacity & CUs</h2>
+    <span class="lede">How Fabric is billed and what to plan for.</span>
+
+    <div class="grid-2" style="margin-top: 24px;">
+      <div>
+        <p>Fabric is sold as <strong>capacity</strong>. You buy a capacity SKU (F2, F4, F8, F16, F64, etc. — the number indicates relative size) and every workload in your tenant runs against that capacity.</p>
+        <p>Capacity is measured in <strong>Capacity Units (CUs)</strong>. A CU is an abstract unit of compute. Different operations consume different amounts.</p>
+        <ul class="clean">
+          <li>Running a Power BI report → small CU usage</li>
+          <li>Refreshing a semantic model → moderate CU usage</li>
+          <li>Running a Spark notebook → high CU usage</li>
+          <li>Mirroring a database continuously → ongoing CU usage</li>
+        </ul>
+        <p style="margin-top: 14px;">Storage is billed separately and cheaply. The expensive part is compute.</p>
+      </div>
+      <div>
+        <h4 style="margin-bottom: 12px;">Things to know</h4>
+        <div class="card" style="margin-bottom: 12px;">
+          <h4 style="font-size: 14px;">Smoothing</h4>
+          <p>Spikes in CU usage are smoothed over a 24-hour window. A short burst over your limit doesn't immediately throttle you.</p>
+        </div>
+        <div class="card" style="margin-bottom: 12px;">
+          <h4 style="font-size: 14px;">Throttling</h4>
+          <p>Sustained over-use eventually throttles workloads. The Fabric Capacity Metrics app shows utilization and helps right-size.</p>
+        </div>
+        <div class="card" style="margin-bottom: 12px;">
+          <h4 style="font-size: 14px;">Pause/resume</h4>
+          <p>Capacities can be paused to stop billing for compute, useful for dev environments off-hours.</p>
+        </div>
+        <div class="card">
+          <h4 style="font-size: 14px;">Power BI Premium inheritance</h4>
+          <p>If you have Power BI Premium capacity, you can use it as Fabric capacity for Fabric workloads at no additional charge.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 22: FABRIC vs POWER PLATFORM
+  ===================================================================== -->
+  <section class="slide">
+    <span class="eyebrow">The big question</span>
+    <h2>Fabric is not the Power Platform</h2>
+    <span class="lede">They're sibling products. Both Microsoft. Different jobs.</span>
+
+    <div class="compare" style="margin-top: 24px;">
+      <div style="background: linear-gradient(135deg, var(--bg-2), var(--bg-3));">
+        <span class="eyebrow">Microsoft Fabric</span>
+        <h3>Analytics platform</h3>
+        <p style="font-size: 14px; margin-top: 12px;">Built for moving, transforming, and analyzing data at scale. The audience is data engineers, analysts, and BI developers.</p>
+        <span class="section-mark" style="margin-top: 22px;">What lives here</span>
+        <ul class="clean" style="margin-top: 8px;">
+          <li>OneLake (the data lake)</li>
+          <li>Lakehouses, Warehouses, Notebooks</li>
+          <li>Pipelines, Dataflows Gen2</li>
+          <li>Power BI reports & semantic models</li>
+        </ul>
+      </div>
+      <div>
+        <span class="eyebrow">Power Platform</span>
+        <h3>Business apps platform</h3>
+        <p style="font-size: 14px; margin-top: 12px;">Built for building business applications and automating processes. The audience is citizen developers and business users.</p>
+        <span class="section-mark" style="margin-top: 22px;">What lives here</span>
+        <ul class="clean" style="margin-top: 8px;">
+          <li>Dataverse (the operational database)</li>
+          <li>Power Apps (canvas & model-driven)</li>
+          <li>Power Automate (workflow automation)</li>
+          <li>Power Pages, Copilot Studio</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 28px;">
+      <strong>The mental model:</strong> Dataverse is to the Power Platform what OneLake is to Fabric. Each platform has its own primary data store, designed for what its tools need.
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 23: CANVAS vs MODEL-DRIVEN APPS
+  ===================================================================== -->
+  <section class="slide">
+    <span class="eyebrow">Power Platform context</span>
+    <h2>Canvas vs Model-driven apps</h2>
+    <span class="lede">Two different philosophies for building Power Apps. Worth understanding the distinction.</span>
+
+    <div class="compare" style="margin-top: 24px;">
+      <div>
+        <span class="eyebrow" style="color: var(--ink-3);">Approach 1</span>
+        <h3>Canvas Apps</h3>
+        <p style="font-size: 14px; margin-top: 12px; font-style: italic; color: var(--ink-3);">UI first. Drag-and-drop the screen, then connect data.</p>
+        <ul class="clean" style="margin-top: 14px;">
+          <li>Start with a blank canvas, design the screens you want</li>
+          <li>Pixel-level control over layout and styling</li>
+          <li>Connect to any data source (not just Dataverse)</li>
+          <li>Custom controls extensible via TypeScript and the Power Apps Component Framework (PCF)</li>
+          <li>Best for purpose-built apps with custom workflows</li>
+        </ul>
+        <p style="margin-top: 14px; font-size: 13px; color: var(--ink-3);">Use case: a field inspection app where the screen layout has to match a specific paper form.</p>
+      </div>
+      <div>
+        <span class="eyebrow" style="color: var(--ink-3);">Approach 2</span>
+        <h3>Model-driven Apps</h3>
+        <p style="font-size: 14px; margin-top: 12px; font-style: italic; color: var(--ink-3);">Data first. Define the tables and relationships, app generates the UI.</p>
+        <ul class="clean" style="margin-top: 14px;">
+          <li>Built on Dataverse (required, not optional)</li>
+          <li>Auto-generated forms, views, and navigation based on table structure</li>
+          <li>Less design control, more data structure focus</li>
+          <li>Strong out-of-the-box record management, history, and security</li>
+          <li>Best for record-management apps that look like CRMs</li>
+        </ul>
+        <p style="margin-top: 14px; font-size: 13px; color: var(--ink-3);">Use case: a customer service tracking app where users navigate accounts, contacts, and cases.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 24: LINK TO FABRIC + DATAVERSE-ONELAKE RELATIONSHIP
+  ===================================================================== -->
+  <section class="slide">
+    <span class="eyebrow">Integration</span>
+    <h2>How Dataverse and OneLake connect</h2>
+    <span class="lede">Same data, different access paths. The OneLake side is a shortcut, not a copy.</span>
+
+    <p style="max-width: 1000px; margin-top: 20px;">
+      When you "Link to Fabric" from Dataverse, you're not copying data. You're creating a shortcut from OneLake into Dataverse's underlying storage. Dataverse remains the source of truth. OneLake reads through to Dataverse storage at query time.
+    </p>
+
+    <div class="grid-3" style="margin-top: 24px;">
+      <div class="card">
+        <h4>Where the data lives</h4>
+        <p>The data is physically stored by Dataverse, in Azure storage that Dataverse manages. OneLake holds a pointer.</p>
+      </div>
+      <div class="card">
+        <h4>How updates flow</h4>
+        <p>A record updated in Dataverse appears in OneLake within ~15 minutes (Fast Fabric). No pipeline to maintain.</p>
+      </div>
+      <div class="card">
+        <h4>How writes flow back</h4>
+        <p>Fabric can compute results, then expose them to Dataverse as <strong>virtual tables</strong> — Dataverse tables that read from OneLake on demand.</p>
+      </div>
+    </div>
+
+    <div class="callout-warn" style="margin-top: 24px;">
+      <strong>Watch for region mismatches.</strong> Link to Fabric requires the Dataverse environment and the Fabric workspace to be in the same Azure region. Cross-region linking has historically been blocked or required Microsoft engagement. Azure Synapse Link for Dataverse (the predecessor) has more flexibility here, which is why some teams have stayed on it.
+    </div>
+
+    <div class="callout" style="margin-top: 16px;">
+      <strong>What about data ingested directly into Fabric?</strong>
+      <p style="font-size: 13px; margin-top: 8px;">If you upload a CSV to a Lakehouse, or a pipeline pulls from an external API into OneLake, then Fabric IS the source of truth for that data. "Dataverse stays the source" only applies to data that originates in Dataverse.</p>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 25: MIRRORING (Postgres example)
+  ===================================================================== -->
+  <section class="slide">
+    <span class="eyebrow">Integration</span>
+    <h2>Mirroring</h2>
+    <span class="lede">Continuous replication of an external database into OneLake. The right tool for your Postgres question.</span>
+
+    <div class="grid-2" style="margin-top: 24px;">
+      <div>
+        <p>Mirroring continuously replicates an external database into OneLake as Delta tables. Changes in the source database flow into OneLake in near real-time.</p>
+        <p>It's different from a shortcut. A shortcut points at the original storage and reads through. A mirror creates copies in OneLake that stay synchronized with the source.</p>
+        <p style="margin-top: 18px;">Currently supported sources for mirroring include:</p>
+        <ul class="clean">
+          <li>Azure SQL Database</li>
+          <li>Azure Cosmos DB</li>
+          <li>Snowflake</li>
+          <li>PostgreSQL (Azure Database for PostgreSQL)</li>
+          <li>Other databases via "Open Mirroring," which lets you push your own change data</li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="color: var(--teal); margin-bottom: 12px;">Your Postgres scenario</h4>
+        <div class="card">
+          <p><strong>The question:</strong> Postgres database. Want it available in OneLake. Is mirroring the answer?</p>
+          <p style="margin-top: 14px;"><strong>Short answer:</strong> Yes, if it's Azure Database for PostgreSQL or you can route through Open Mirroring.</p>
+          <p style="margin-top: 10px;"><strong>What you get:</strong></p>
+          <ul class="clean">
+            <li>Postgres tables appear in OneLake as Delta tables</li>
+            <li>Updates in Postgres flow into OneLake automatically</li>
+            <li>Power BI, notebooks, and warehouses can query the OneLake copy</li>
+            <li>Postgres operational queries don't get impacted by analytics load</li>
+          </ul>
+          <p style="margin-top: 14px;"><strong>What it doesn't do:</strong></p>
+          <ul class="clean">
+            <li>Mirroring is one-way (Postgres → OneLake only)</li>
+            <li>Writes to OneLake mirrors don't go back to Postgres</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 26: THE DATAFLOW CONFUSION
+  ===================================================================== -->
+  <section class="slide">
+    <span class="eyebrow">The naming problem</span>
+    <h2>The dataflow confusion</h2>
+    <span class="lede">Three different things share the name "dataflow." This is the source of most documentation pain.</span>
+
+    <div class="dataflow-cols" style="margin-top: 24px;">
+      <div class="dataflow-card">
+        <div class="head">
+          <h4>Dataflow Gen1</h4>
+          <div class="sub">Power BI · Legacy</div>
+        </div>
+        <div class="body">
+          <p>The original Power BI dataflow. A Power Query workload that lands data in the Power BI service for use in semantic models.</p>
+          <dl class="meta">
+            <dt>Where</dt>
+            <dd>Power BI workspace</dd>
+            <dt>Output</dt>
+            <dd>Common Data Model (CDM) folders in ADLS</dd>
+            <dt>Engine</dt>
+            <dd>Power Query Online</dd>
+            <dt>Use for</dt>
+            <dd>Existing Power BI work that hasn't migrated yet</dd>
+          </dl>
+        </div>
+      </div>
+      <div class="dataflow-card gen2">
+        <div class="head">
+          <h4>Dataflow Gen2</h4>
+          <div class="sub">Fabric · Data Factory</div>
+        </div>
+        <div class="body">
+          <p>The Fabric replacement. Same Power Query interface, but runs on Fabric's SQL compute engine and writes directly to OneLake.</p>
+          <dl class="meta">
+            <dt>Where</dt>
+            <dd>Fabric workspace (Data Factory)</dd>
+            <dt>Output</dt>
+            <dd>Lakehouse, Warehouse, KQL DB, or Azure SQL</dd>
+            <dt>Engine</dt>
+            <dd>Power Query + Fabric SQL compute</dd>
+            <dt>Use for</dt>
+            <dd>New transformation work in Fabric</dd>
+          </dl>
+        </div>
+      </div>
+      <div class="dataflow-card">
+        <div class="head">
+          <h4>Dataverse Dataflow</h4>
+          <div class="sub">Power Platform</div>
+        </div>
+        <div class="body">
+          <p>A separate feature for loading data into Dataverse tables. Also Power Query under the hood, but the destination is Dataverse, not OneLake.</p>
+          <dl class="meta">
+            <dt>Where</dt>
+            <dd>Power Apps maker portal</dd>
+            <dt>Output</dt>
+            <dd>Dataverse tables</dd>
+            <dt>Engine</dt>
+            <dd>Power Query Online</dd>
+            <dt>Use for</dt>
+            <dd>Bulk-loading data into Dataverse</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <p style="margin-top: 22px; font-size: 14px; font-style: italic; color: var(--ink-3); text-align: center;">All three use Power Query as the transformation engine. They differ in where they live and where they write to.</p>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 27: HOW EVERYTHING CONNECTS (revised architecture map)
+  ===================================================================== -->
+  <section class="slide">
+    <span class="eyebrow">Reference</span>
+    <h2>How everything connects</h2>
+    <span class="lede">One slide. Print this if it helps.</span>
+
+    <div class="arch-diagram" style="margin-top: 22px;">
+      <div class="arch-tier">
+        <div class="tier-label">Consumption · what end-users see</div>
+        <div class="tier-row">
+          <div class="arch-node consumer">Power BI Reports</div>
+          <div class="arch-node consumer">Excel</div>
+          <div class="arch-node consumer">Power Apps</div>
+          <div class="arch-node consumer">AI Agents</div>
+        </div>
+      </div>
+      <div class="arch-tier">
+        <div class="tier-label">Build & analyze · where data work happens</div>
+        <div class="tier-row">
+          <div class="arch-node workload">Lakehouse</div>
+          <div class="arch-node workload">Warehouse</div>
+          <div class="arch-node workload">Data Engineering</div>
+          <div class="arch-node workload">Real-Time Intelligence</div>
+          <div class="arch-node workload">Data Science</div>
+        </div>
+      </div>
+      <div class="arch-tier">
+        <div class="tier-label">Move & transform · how data flows</div>
+        <div class="tier-row">
+          <div class="arch-node">Pipelines</div>
+          <div class="arch-node">Dataflows Gen2</div>
+          <div class="arch-node">Mirroring</div>
+          <div class="arch-node">Shortcuts</div>
+          <div class="arch-node">Eventstream</div>
+        </div>
+      </div>
+      <div class="arch-tier" style="background: linear-gradient(135deg, var(--bg-2), var(--bg-3)); border-color: var(--teal);">
+        <div class="tier-label" style="color: var(--teal);">Storage foundation</div>
+        <div style="padding: 10px 0;">
+          <div class="arch-node onelake">OneLake · Delta Parquet · Single storage for all of Fabric</div>
+        </div>
+      </div>
+      <div class="arch-tier">
+        <div class="tier-label">Sources · where the data originates</div>
+        <div class="tier-row">
+          <div class="arch-node ext-source">Dataverse</div>
+          <div class="arch-node ext-source">ADLS / S3 / GCS</div>
+          <div class="arch-node ext-source">SQL databases</div>
+          <div class="arch-node ext-source">SaaS APIs</div>
+          <div class="arch-node ext-source">Event streams</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 18px;">
+      <strong>The pattern:</strong> sources flow up through ingestion tools into OneLake. Workloads read and write OneLake. Consumption tools read from workloads (or from OneLake directly via DirectLake).
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 28: WHO USES WHAT
+  ===================================================================== -->
+  <section class="slide">
+    <span class="eyebrow">Personas</span>
+    <h2>Who uses what</h2>
+    <span class="lede">Same data, different tools, different audiences.</span>
+
+    <table class="personas" style="margin-top: 24px;">
+      <thead>
+        <tr>
+          <th style="width: 16%;">Role</th>
+          <th style="width: 32%;">Primary Tools</th>
+          <th style="width: 36%;">What They Do</th>
+          <th style="width: 16%;">Mostly</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Business User</td>
+          <td>Power BI Reports, Power Apps, Excel</td>
+          <td>Consumes dashboards. Uses internal apps. Doesn't write code.</td>
+          <td>Both</td>
+        </tr>
+        <tr>
+          <td>Analyst</td>
+          <td>Power BI Desktop, Power Query, Excel, semantic models</td>
+          <td>Builds reports, defines DAX measures, transforms data with clicks.</td>
+          <td>Fabric</td>
+        </tr>
+        <tr>
+          <td>Citizen Developer</td>
+          <td>Power Apps (canvas + model-driven), Power Automate, Dataverse</td>
+          <td>Builds business apps and automations without traditional code.</td>
+          <td>Power Platform</td>
+        </tr>
+        <tr>
+          <td>Data Engineer</td>
+          <td>Lakehouse, Spark notebooks, Pipelines, Dataflows Gen2</td>
+          <td>Ingests, transforms, and curates data for downstream use.</td>
+          <td>Fabric</td>
+        </tr>
+        <tr>
+          <td>Data Scientist</td>
+          <td>Notebooks, MLflow, Data Science workload</td>
+          <td>Trains ML models against curated data. Deploys for scoring.</td>
+          <td>Fabric</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 29: KEY TAKEAWAYS
+  ===================================================================== -->
+  <section class="slide">
+    <span class="eyebrow">Key Takeaways</span>
+    <h2>If you remember nothing else</h2>
+
+    <div style="margin-top: 28px;">
+      <div class="num-item"><div class="num">01</div><div><h4>Fabric is one platform with one shared lake (OneLake) underneath every workload.</h4><p>The architectural premise. Everything else follows.</p></div></div>
+      <div class="num-item"><div class="num">02</div><div><h4>Tables live as Delta Parquet. Open format. Every engine reads the same files.</h4><p>This is why workloads can share data without copying.</p></div></div>
+      <div class="num-item"><div class="num">03</div><div><h4>Power Query (M) reshapes data. DAX is written in the semantic model itself.</h4><p>Two different languages, two different stages of the work.</p></div></div>
+      <div class="num-item"><div class="num">04</div><div><h4>Fabric and Power Platform are sibling products. Dataverse is to Power Platform what OneLake is to Fabric.</h4><p>They connect through Link to Fabric, but they're not the same thing.</p></div></div>
+      <div class="num-item"><div class="num">05</div><div><h4>Three things named "dataflow": Gen1, Gen2, and Dataverse dataflow.</h4><p>Ask where it lives — that tells you which one.</p></div></div>
+      <div class="num-item"><div class="num">06</div><div><h4>Medallion (Bronze, Silver, Gold) is how to organize the work.</h4><p>Capture raw data, clean it, curate it for business use. Each layer in its own place.</p></div></div>
+      <div class="num-item"><div class="num">07</div><div><h4>Capacity is measured in CUs. Compute costs more than storage. Plan workloads accordingly.</h4><p>The right capacity SKU depends on workload volume, not data volume.</p></div></div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 30: GLOSSARY
+  ===================================================================== -->
+  <section class="slide">
+    <span class="eyebrow">Reference</span>
+    <h2>Quick glossary</h2>
+    <span class="lede">Terms you'll hear and what they mean.</span>
+
+    <dl class="deflist" style="margin-top: 24px;">
+      <dt>Capacity</dt><dd>The compute and storage allocation that powers your tenant. Billed in CUs.</dd>
+      <dt>Workspace</dt><dd>The security and collaboration boundary inside Fabric. Permissions are granted here.</dd>
+      <dt>Item</dt><dd>Anything you create in a workspace: Lakehouse, Warehouse, Report, Notebook, Pipeline.</dd>
+      <dt>Lakehouse</dt><dd>Workspace item that holds files and Delta tables. Spark-friendly entry point.</dd>
+      <dt>Warehouse</dt><dd>Workspace item that exposes Delta tables through T-SQL with full transactional support.</dd>
+      <dt>DirectLake</dt><dd>Power BI mode that reads Delta files in OneLake directly. Import speed, no refresh.</dd>
+      <dt>Shortcut</dt><dd>A pointer in OneLake to data stored elsewhere (S3, ADLS, Dataverse). No copy.</dd>
+      <dt>Mirroring</dt><dd>Continuous replication of an external database into OneLake as Delta tables.</dd>
+      <dt>Medallion</dt><dd>Pattern of organizing data in three layers: Bronze (raw), Silver (cleaned), Gold (curated).</dd>
+      <dt>Activator</dt><dd>Fabric tool that watches data and triggers actions when conditions are met.</dd>
+      <dt>Eventstream</dt><dd>Real-Time Intelligence's ingestion layer. Connects to streaming sources.</dd>
+      <dt>Eventhouse</dt><dd>The KQL database underneath Real-Time Intelligence.</dd>
+      <dt>Virtual table</dt><dd>A Dataverse table that reads from OneLake on demand. Bridges Fabric outputs to Power Apps.</dd>
+      <dt>Domain</dt><dd>A logical grouping of workspaces above the workspace level. Used in data mesh patterns.</dd>
+    </dl>
+    <div class="source">Sources: Microsoft Learn (learn.microsoft.com/fabric), Power Platform docs</div>
+  </section>
+
+  <!-- ====================================================================
+       SLIDE 31: QUESTIONS
+  ===================================================================== -->
+  <section class="slide slide-title">
+    <span class="eyebrow">Discussion</span>
+    <h1>Questions.</h1>
+    <div class="title-mark"></div>
+    <p style="font-size: 18px; max-width: 600px; color: var(--ink-2); font-style: italic;">
+      Bring them. The map exists so we can refine it together.
+    </p>
+  </section>
+
+</div>
+
+<nav class="nav">
+  <button id="prev" aria-label="Previous slide">← Prev</button>
+  <span class="counter"><b id="cur">1</b> / <span id="tot">31</span></span>
+  <button id="next" aria-label="Next slide">Next →</button>
+</nav>
+
+<script>
+  // ============ PARTICLE BACKGROUND ============
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles, mouseX = 0, mouseY = 0;
+
+  function resize() {
+    W = canvas.width = window.innerWidth * (window.devicePixelRatio || 1);
+    H = canvas.height = window.innerHeight * (window.devicePixelRatio || 1);
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    initParticles();
+  }
+
+  function initParticles() {
+    const count = Math.min(80, Math.floor((W * H) / 25000 / (window.devicePixelRatio || 1)));
+    particles = [];
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        r: Math.random() * 1.6 + 0.4,
+        opacity: Math.random() * 0.5 + 0.2,
+      });
+    }
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Update + draw particles
+    for (let p of particles) {
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0) p.x = W;
+      if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H;
+      if (p.y > H) p.y = 0;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(0, 212, 192, ${p.opacity})`;
+      ctx.fill();
+    }
+
+    // Draw connections
+    const maxDist = 140 * (window.devicePixelRatio || 1);
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < maxDist) {
+          const opacity = (1 - dist / maxDist) * 0.15;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(0, 184, 169, ${opacity})`;
+          ctx.lineWidth = 0.5 * (window.devicePixelRatio || 1);
+          ctx.stroke();
+        }
+      }
+    }
+
+    requestAnimationFrame(animate);
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+  animate();
+
+  // ============ SLIDE NAVIGATION ============
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  document.getElementById('tot').textContent = total;
+  let cur = 0;
+
+  function go(idx) {
+    if (idx < 0) idx = 0;
+    if (idx >= total) idx = total - 1;
+    slides[cur].classList.remove('active');
+    slides[idx].classList.add('active');
+    slides[idx].scrollTop = 0;
+    cur = idx;
+    document.getElementById('cur').textContent = idx + 1;
+    document.getElementById('progress').style.width = ((idx + 1) / total * 100) + '%';
+    history.replaceState(null, '', '#' + (idx + 1));
+  }
+
+  document.getElementById('next').addEventListener('click', () => go(cur + 1));
+  document.getElementById('prev').addEventListener('click', () => go(cur - 1));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); go(cur + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(cur - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End') { e.preventDefault(); go(total - 1); }
+    else if (e.key === 'f' || e.key === 'F') {
+      e.preventDefault();
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+      else document.exitFullscreen();
+    }
+    else if (e.key === 'p' || e.key === 'P') { e.preventDefault(); window.print(); }
+  });
+
+  // Touch nav
+  let touchStartX = null;
+  document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', (e) => {
+    if (touchStartX === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 60) {
+      if (dx < 0) go(cur + 1); else go(cur - 1);
+    }
+    touchStartX = null;
+  });
+
+  // Initial state from hash
+  const hash = parseInt(location.hash.replace('#', ''));
+  if (!isNaN(hash) && hash >= 1 && hash <= total) {
+    slides[0].classList.remove('active');
+    go(hash - 1);
+  } else {
+    document.getElementById('progress').style.width = (1 / total * 100) + '%';
+  }
+</script>
+
+</body>
+</html>
